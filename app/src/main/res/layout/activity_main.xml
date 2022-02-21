@@ -8,11 +8,22 @@
     android:orientation="vertical">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/list_fragment"
+        android:id="@+id/search_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10"
+        android:layout_weight="1"
         android:layout_margin="10dp"
+        android:background="@color/white"
+        android:name="com.fancysoft.androidnoteapp.fragment.SearchFragment" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/note_list_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@color/white"
         android:name="com.fancysoft.androidnoteapp.fragment.NoteListFragment" />
 
