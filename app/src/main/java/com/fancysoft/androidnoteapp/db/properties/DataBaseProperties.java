@@ -26,9 +26,9 @@ public class DataBaseProperties {
     /**
      * Columns names
      */
-    public final String idColumn;
-    public final String lastUpdateColumn;
-    public final String contentColumn;
+    private final String idColumn;
+    private final String lastUpdateColumn;
+    private final String contentColumn;
 
     /**
      * Database properties instance
