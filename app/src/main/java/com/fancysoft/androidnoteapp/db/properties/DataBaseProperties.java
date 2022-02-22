@@ -1,5 +1,9 @@
 package com.fancysoft.androidnoteapp.db.properties;
 
+import android.content.Context;
+
+import com.fancysoft.androidnoteapp.utils.Helper;
+
 import java.util.Properties;
 
 import lombok.AccessLevel;
@@ -47,12 +51,13 @@ public class DataBaseProperties {
 
     /**
      * Returns instance of database properties
-     * @param properties - reference to app properties
+     * @param context - application context
      * @return database properties with set data
      */
-    public static DataBaseProperties getInstance(Properties properties) {
+    public static DataBaseProperties getInstance(Context context) {
         if (dbProperties == null) {
-            return new DataBaseProperties(properties);
+            Properties properties = Helper.getProperties(context.getApplicationContext());
+            dbProperties = new DataBaseProperties(properties);
         }
         return dbProperties;
     }

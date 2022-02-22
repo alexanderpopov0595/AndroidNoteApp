@@ -20,9 +20,27 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      */
     private final DataBaseProperties dbProperties;
 
-    public DataBaseHelper(Context context, DataBaseProperties dbProperties) {
+    /**
+     * Database helper instance
+     */
+    private static DataBaseHelper dbHelper;
+
+    private DataBaseHelper(Context context, DataBaseProperties dbProperties) {
         super(context, dbProperties.getName(), null, dbProperties.getSchema());
         this.dbProperties = dbProperties;
+    }
+
+    /**
+     * Returns instance of database helper
+     * @param context - application context
+     * @return database helper
+     */
+    public static DataBaseHelper getInstance(Context context) {
+        if (dbHelper == null) {
+            DataBaseProperties dbProperties = DataBaseProperties.getInstance(context.getApplicationContext());
+            dbHelper = new DataBaseHelper(context.getApplicationContext(), dbProperties);
+        }
+        return dbHelper;
     }
 
     /**
