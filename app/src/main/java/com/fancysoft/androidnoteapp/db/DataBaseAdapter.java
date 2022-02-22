@@ -46,9 +46,8 @@ public class DataBaseAdapter {
      * @return cursor with all notes
      */
     public Cursor getAll() {
-        try (SQLiteDatabase database = dbHelper.getReadableDatabase()) {
-            String[] columns = new String[]{dbProperties.getIdColumn(), dbProperties.getLastUpdateColumn(), dbProperties.getContentColumn()};
-            return database.query(dbProperties.getTable(), columns, null, null, null, null, null);
-        }
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        String[] columns = new String[]{dbProperties.getIdColumn(), dbProperties.getLastUpdateColumn(), dbProperties.getContentColumn()};
+        return database.query(dbProperties.getTable(), columns, null, null, null, null, null);
     }
 }

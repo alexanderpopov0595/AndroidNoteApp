@@ -2,6 +2,8 @@ package com.fancysoft.androidnoteapp.fragment;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,6 +13,7 @@ import com.fancysoft.androidnoteapp.R;
 import com.fancysoft.androidnoteapp.db.DataBaseAdapter;
 import com.fancysoft.androidnoteapp.db.DataBaseHelper;
 import com.fancysoft.androidnoteapp.db.properties.DataBaseProperties;
+import com.fancysoft.androidnoteapp.model.Note;
 import com.fancysoft.androidnoteapp.utils.Helper;
 
 import java.util.Properties;
@@ -31,6 +34,34 @@ public class AddNoteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Button cancelButton = view.findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.note_list_fragment, new NoteListFragment())
+                        .commit();
+            }
+        });
+
+        Button saveButton = view.findViewById(R.id.save_button);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText inputField = view.findViewById(R.id.input_field);
+                String text = inputField.getText().toString();
+                Note note = new Note(System.currentTimeMillis(), text);
+                dbAdapter.add(note);
+
+                //TODO replace with edit note fragment switch
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.note_list_fragment, new NoteListFragment())
+                        .commit();
+            }
+        });
         run();
     }
 
@@ -42,11 +73,4 @@ public class AddNoteFragment extends Fragment {
         dbAdapter = new DataBaseAdapter(dbHelper, dbProperties);
     }
 
-    /**
-     * Adds note to database and switches to edit note activity
-     * @param view - edit text field
-     */
-    public void onSave(View view) {
-        System.out.println("Placeholder for now");
-    }
 }
