@@ -1,12 +1,7 @@
 package com.fancysoft.androidnoteapp.db.properties;
 
-import android.content.Context;
-
-import com.fancysoft.androidnoteapp.utils.Helper;
-
 import java.util.Properties;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
@@ -34,13 +29,7 @@ public class DataBaseProperties {
     private final String lastUpdateColumn;
     private final String contentColumn;
 
-    /**
-     * Database properties instance
-     */
-    @Getter(AccessLevel.NONE)
-    private static DataBaseProperties dbProperties;
-
-    private DataBaseProperties(Properties properties) {
+    public DataBaseProperties(Properties properties) {
         name = properties.getProperty("database_name");
         schema = Integer.parseInt(properties.getProperty("database_schema"));
         table = properties.getProperty("database_table");
@@ -48,18 +37,4 @@ public class DataBaseProperties {
         lastUpdateColumn = properties.getProperty("database_last_update_column");
         contentColumn = properties.getProperty("database_content_column");
     }
-
-    /**
-     * Returns instance of database properties
-     * @param context - application context
-     * @return database properties with set data
-     */
-    public static DataBaseProperties getInstance(Context context) {
-        if (dbProperties == null) {
-            Properties properties = Helper.getProperties(context.getApplicationContext());
-            dbProperties = new DataBaseProperties(properties);
-        }
-        return dbProperties;
-    }
-
 }
