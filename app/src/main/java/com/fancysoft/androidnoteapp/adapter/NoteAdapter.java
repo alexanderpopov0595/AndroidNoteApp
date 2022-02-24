@@ -19,6 +19,9 @@ import com.fancysoft.androidnoteapp.utils.Helper;
  */
 public class NoteAdapter extends CursorAdapter {
 
+    /**
+     * Holds database properties
+     */
     private final DataBaseProperties dbProperties;
 
     public NoteAdapter(Context context, Cursor cursor, DataBaseProperties dbProperties) {
@@ -26,8 +29,14 @@ public class NoteAdapter extends CursorAdapter {
         this.dbProperties = dbProperties;
     }
 
-    // The newView method is used to inflate a new view and return it,
-    // Doesn't bind any data to the view at this point.
+    /**
+     *  The newView method is used to inflate a new view and return it,
+     *  Doesn't bind any data to the view at this point.
+     * @param context - current context
+     * @param cursor - cursor with all notes
+     * @param parent
+     * @return new view
+     */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -39,7 +48,12 @@ public class NoteAdapter extends CursorAdapter {
         return view;
     }
 
-    //Used to bind all data to a given view
+    /**
+     * Used to bind all data to a given view
+     * @param view - given view
+     * @param context - current context
+     * @param cursor - cursor with all notes
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
