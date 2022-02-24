@@ -53,7 +53,10 @@ public class AddNoteFragment extends Fragment {
                 EditText inputField = view.findViewById(R.id.input_field);
                 String text = inputField.getText().toString();
                 Note note = new Note(System.currentTimeMillis(), text);
+
+                dbAdapter.open();
                 dbAdapter.add(note);
+                dbAdapter.close();
 
                 //TODO replace with edit note fragment switch
                 getParentFragmentManager()

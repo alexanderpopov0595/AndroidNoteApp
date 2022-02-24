@@ -24,6 +24,16 @@ public class DataBaseAdapter {
      */
     private final DataBaseProperties dbProperties;
 
+    private SQLiteDatabase db;
+
+    public DataBaseAdapter open(){
+        db = dbHelper.getWritableDatabase();
+        return this;
+    }
+
+    public void close(){
+        dbHelper.close();
+    }
     /**
      * Adds new note to database
      *
@@ -31,13 +41,10 @@ public class DataBaseAdapter {
      * @return id of inserted row
      */
     public long add(Note note) {
-        try (SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            ContentValues values = new ContentValues();
-            values.put(dbProperties.getLastUpdateColumn(), note.getLastUpdate());
-            values.put(dbProperties.getContentColumn(), note.getContent());
-
-            return database.insert(dbProperties.getTable(), null, values);
-        }
+        ContentValues values = new ContentValues();
+        values.put(dbProperties.getLastUpdateColumn(), note.getLastUpdate());
+        values.put(dbProperties.getContentColumn(), note.getContent());
+        return db.insert(dbProperties.getTable(), null, values);
     }
 
     /**
@@ -46,8 +53,7 @@ public class DataBaseAdapter {
      * @return cursor with all notes
      */
     public Cursor getAll() {
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
         String[] columns = new String[]{dbProperties.getIdColumn(), dbProperties.getLastUpdateColumn(), dbProperties.getContentColumn()};
-        return database.query(dbProperties.getTable(), columns, null, null, null, null, null);
+        return db.query(dbProperties.getTable(), columns, null, null, null, null, null);
     }
 }

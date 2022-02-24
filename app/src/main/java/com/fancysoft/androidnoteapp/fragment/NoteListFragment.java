@@ -24,6 +24,8 @@ import com.fancysoft.androidnoteapp.utils.Helper;
  */
 public class NoteListFragment extends Fragment {
 
+    private Cursor dbCursor;
+    private DataBaseAdapter dbAdapter;
     /**
      * Passes note list fragment layout to super constructor
      */
@@ -45,14 +47,25 @@ public class NoteListFragment extends Fragment {
 
         DataBaseProperties dbProperties = new DataBaseProperties(Helper.getProperties(this.getContext().getApplicationContext()));
         DataBaseHelper dbHelper = new DataBaseHelper(this.getContext().getApplicationContext(), dbProperties);
-        DataBaseAdapter dbAdapter = new DataBaseAdapter(dbHelper ,dbProperties);
 
-        Cursor cursor = dbAdapter.getAll();
-        NoteAdapter adapter = new NoteAdapter(this.getContext().getApplicationContext(), cursor, dbProperties);
+        dbAdapter = new DataBaseAdapter(dbHelper ,dbProperties);
+        dbAdapter.open();
+        dbCursor = dbAdapter.getAll();
+
+        NoteAdapter adapter = new NoteAdapter(this.getContext().getApplicationContext(), dbCursor, dbProperties);
 
         ListView noteList = view.findViewById(R.id.note_list);
         noteList.setAdapter(adapter);
 
     }
 
+    /**
+     * Closes db connection and cursor
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        dbAdapter.close();
+        dbCursor.close();
+    }
 }
