@@ -26,7 +26,7 @@ public class Constants {
     public final static String SQL_CREATE_QUERY = "CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s DATETIME DEFAULT CURRENT_TIMESTAMP, %s TEXT)";
     public final static String SQL_UPGRADE_QUERY = "DROP TABLE IF EXISTS %s";
     public final static String SQL_SELECT_BY_ID_QUERY = "SELECT * FROM %s WHERE %s = ?";
-    public final static String SQL_UPDATE_CLAUSE = "%s = %d";
+    public final static String SQL_SELECT_BY_CONTENT_QUERY = "SELECT * FROM %s WHERE %s LIKE ?";
 
     /**
      * Key for storing note id in bundle

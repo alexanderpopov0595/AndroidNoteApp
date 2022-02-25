@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FilterQueryProvider;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,12 +59,21 @@ public class NoteListFragment extends Fragment {
 
         NoteAdapter adapter = new NoteAdapter(this.getContext().getApplicationContext(), dbCursor, dbProperties);
 
+        adapter.setFilterQueryProvider(new FilterQueryProvider() {
+            @Override
+            public Cursor runQuery(CharSequence constraint) {
+                if (constraint == null || constraint.length() == 0) {
+                    return dbAdapter.getAll();
+                }
+                return dbAdapter.getByContent(constraint.toString());
+            }
+        });
+
         ListView noteList = view.findViewById(R.id.note_list);
         noteList.setAdapter(adapter);
         noteList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-            {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 long noteId = 0;
 
                 try(Cursor cursor = (Cursor) parent.getItemAtPosition(position)) {
@@ -81,6 +92,20 @@ public class NoteListFragment extends Fragment {
                         .beginTransaction()
                         .replace(R.id.note_list_fragment, fragment)
                         .commit();
+            }
+        });
+
+        SearchView search = view.findViewById(R.id.search);
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                adapter.getFilter().filter(query);
+                return false;
             }
         });
     }

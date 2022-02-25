@@ -103,4 +103,9 @@ public class DataBaseAdapter {
 
         db.delete(dbProperties.getTable(), whereClause, null);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public Cursor getByContent(String content) {
+        return db.rawQuery(String.format(Constants.SQL_SELECT_BY_CONTENT_QUERY, dbProperties.getTable(), dbProperties.getContentColumn()), new String[]{ "%"+ content + "%" });
+    }
 }
