@@ -97,4 +97,10 @@ public class DataBaseAdapter {
 
         return db.update(dbProperties.getTable(), values, whereClause, null);
     }
+
+    public void delete(long id) {
+        String whereClause = dbProperties.getIdColumn() + "=" + id;
+
+        db.delete(dbProperties.getTable(), whereClause, null);
+    }
 }

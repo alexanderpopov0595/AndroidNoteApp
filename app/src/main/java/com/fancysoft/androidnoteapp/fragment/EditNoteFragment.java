@@ -98,6 +98,21 @@ public class EditNoteFragment extends Fragment {
                         .commit();
             }
         });
+
+        Button deleteButton = view.findViewById(R.id.delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dbAdapter.open();
+                dbAdapter.delete(noteId);
+                dbAdapter.close();
+
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.note_list_fragment, new NoteListFragment())
+                        .commit();
+            }
+        });
     }
 
     /**
