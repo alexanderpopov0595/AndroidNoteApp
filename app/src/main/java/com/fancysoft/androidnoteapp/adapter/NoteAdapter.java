@@ -63,8 +63,8 @@ public class NoteAdapter extends CursorAdapter {
         int lastUpdateIndex = cursor.getColumnIndex(dbProperties.getLastUpdateColumn());
         int textIndex = cursor.getColumnIndex(dbProperties.getContentColumn());
 
-        holder.getNoteIdView().setText(String.valueOf(cursor.getInt(idIndex)));
-        holder.getNoteLastUpdateView().setText(Helper.millisToString(cursor.getInt(lastUpdateIndex)));
+        holder.getNoteIdView().setText(String.valueOf(cursor.getLong(idIndex)));
+        holder.getNoteLastUpdateView().setText(Helper.millisToString(cursor.getLong(lastUpdateIndex)));
         holder.getNoteContentView().setText(cursor.getString(textIndex));
     }
 }

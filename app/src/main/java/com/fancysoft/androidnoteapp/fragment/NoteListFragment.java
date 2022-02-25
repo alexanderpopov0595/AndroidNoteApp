@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -17,6 +18,7 @@ import com.fancysoft.androidnoteapp.adapter.NoteAdapter;
 import com.fancysoft.androidnoteapp.db.DataBaseAdapter;
 import com.fancysoft.androidnoteapp.db.DataBaseHelper;
 import com.fancysoft.androidnoteapp.db.properties.DataBaseProperties;
+import com.fancysoft.androidnoteapp.utils.Constants;
 import com.fancysoft.androidnoteapp.utils.Helper;
 
 /**
@@ -26,6 +28,7 @@ public class NoteListFragment extends Fragment {
 
     private Cursor dbCursor;
     private DataBaseAdapter dbAdapter;
+
     /**
      * Passes note list fragment layout to super constructor
      */
@@ -56,7 +59,30 @@ public class NoteListFragment extends Fragment {
 
         ListView noteList = view.findViewById(R.id.note_list);
         noteList.setAdapter(adapter);
+        noteList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+            {
+                long noteId = 0;
 
+                try(Cursor cursor = (Cursor) parent.getItemAtPosition(position)) {
+                        int idColumnIndex = cursor.getColumnIndex(dbProperties.getIdColumn());
+
+                        noteId= cursor.getLong(idColumnIndex);
+                }
+
+                Bundle bundle = new Bundle();
+                bundle.putLong(Constants.NOTE_ID_KEY, noteId);
+
+                Fragment fragment = new EditNoteFragment();
+                fragment.setArguments(bundle);
+
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.note_list_fragment, fragment)
+                        .commit();
+            }
+        });
     }
 
     /**

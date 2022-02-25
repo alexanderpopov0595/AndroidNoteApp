@@ -14,15 +14,16 @@
         android:layout_margin="10dp">
 
         <Button
-            android:id="@+id/cancel_button"
+            android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:backgroundTint="@color/white"
-            android:text="Cancel"
+            android:text="Back"
             android:textColor="@color/black" />
 
-        <View
+        <TextView
+            android:id="@+id/note_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -38,11 +39,22 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/note_last_update"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="end"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="Last update"
+        android:textColor="@color/white"/>
+
     <EditText
-        android:id="@+id/input_field"
+        android:id="@+id/note_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9"
+        android:layout_weight="7"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
@@ -50,5 +62,16 @@
         android:gravity="top"
         android:background="@color/white">
     </EditText>
+    <Button
+        android:id="@+id/add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="end"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/white"
+        android:text="Delete"
+        android:textColor="@color/black"/>
 
 </LinearLayout>
