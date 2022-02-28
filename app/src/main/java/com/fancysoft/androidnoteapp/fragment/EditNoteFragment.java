@@ -1,5 +1,6 @@
 package com.fancysoft.androidnoteapp.fragment;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -13,10 +14,12 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.fancysoft.androidnoteapp.R;
-import com.fancysoft.androidnoteapp.db.DataBaseAdapter;
 import com.fancysoft.androidnoteapp.db.DataBaseHelper;
 import com.fancysoft.androidnoteapp.db.properties.DataBaseProperties;
+import com.fancysoft.androidnoteapp.exception.model.AppException;
 import com.fancysoft.androidnoteapp.model.Note;
+import com.fancysoft.androidnoteapp.repository.NoteRepository;
+import com.fancysoft.androidnoteapp.repository.impl.NoteRepositoryImpl;
 import com.fancysoft.androidnoteapp.utils.Constants;
 import com.fancysoft.androidnoteapp.utils.Helper;
 
@@ -27,7 +30,7 @@ import java.util.Properties;
  */
 public class EditNoteFragment extends Fragment {
 
-    private DataBaseAdapter dbAdapter;
+    private NoteRepository repository;
     /**
      * Passes add note fragment layout to super constructor
      */
@@ -40,21 +43,69 @@ public class EditNoteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Properties properties = Helper.getProperties(this.getContext().getApplicationContext());
+        initRepository();
+        initNoteView(view, getNote());
+        initBackButton(view);
+        initSaveButton(view);
+        initDeleteButton(view);
+    }
+
+    /**
+     * Inits repository
+     */
+    private void initRepository() {
+        Context context = this.requireContext().getApplicationContext();
+
+        Properties properties = Helper.getProperties(context);
         DataBaseProperties dbProperties = new DataBaseProperties(properties);
 
-        DataBaseHelper dbHelper = new DataBaseHelper(this.getContext().getApplicationContext(), dbProperties);
-        dbAdapter = new DataBaseAdapter(dbHelper, dbProperties);
-        dbAdapter.open();
+        DataBaseHelper dbHelper = new DataBaseHelper(context, dbProperties);
+        repository = new NoteRepositoryImpl(dbHelper, dbProperties);
+    }
 
+    /**
+     * Retrieves note from database
+     * @return retrieved note
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private Note getNote() {
+        long noteId = getNoteId();
+
+        return repository.get(noteId);
+    }
+
+    /**
+     * Retrieves saved note id from bundle
+     * @return retrieved note id
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private long getNoteId() {
+        Bundle bundle = getBundle();
+
+        return bundle.getLong(Constants.NOTE_ID_KEY);
+    }
+
+    /**
+     * Retrieves bundle
+     * @return bundle with saved arguments
+     * @throws AppException if bundle is null
+     */
+    private Bundle getBundle() {
         Bundle bundle = this.getArguments();
 
-        long noteId = bundle.getLong(Constants.NOTE_ID_KEY);
+        if (bundle == null) {
+            throw new AppException("Data wasn't passed between fragments");
+        }
 
-        Note note = dbAdapter.get(noteId);
+        return bundle;
+    }
 
-        dbAdapter.close();
-
+    /**
+     * Passes note values to the UI
+     * @param view - current view
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void initNoteView(View view, Note note) {
         TextView noteIdView = view.findViewById(R.id.note_id);
         noteIdView.setText(String.valueOf(note.getId()));
 
@@ -63,64 +114,82 @@ public class EditNoteFragment extends Fragment {
 
         EditText noteContentView = view.findViewById(R.id.note_content);
         noteContentView.setText(note.getContent());
+    }
 
-        Button backButton = view.findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.note_list_fragment, new NoteListFragment())
-                        .commit();
-            }
-        });
+    /**
+     * Inits "back" button, which should switch back to the list fragment     *
+     * @param view - current layout
+     */
+    private void initBackButton(View view) {
+        Button button = view.findViewById(R.id.back_button);
+        button.setOnClickListener(v -> getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.note_list_fragment, new NoteListFragment())
+                .commit());
+    }
 
-        Button saveButton = view.findViewById(R.id.save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
+    /**
+     * Inits "save" button, which should save note and refresh UI content     *
+     * @param view - current layout
+     */
+    private void initSaveButton(View view) {
+        Button button = view.findViewById(R.id.save_button);
+        button.setOnClickListener(v -> {
+            Note note = viewToNote(view);
 
-            @Override
-            public void onClick(View v) {
-                EditText editText = view.findViewById(R.id.note_content);
-                String content = editText.getText().toString();
+            repository.update(note);
 
-                Note updatedNote = new Note(noteId, System.currentTimeMillis(), content);
+            Bundle bundle = getBundle();
+            Fragment fragment = getFragment(bundle);
 
-                dbAdapter.open();
-                dbAdapter.update(updatedNote);
-                dbAdapter.close();
-
-                Fragment fragment = new EditNoteFragment();
-                fragment.setArguments(bundle);
-
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.note_list_fragment, fragment)
-                        .commit();
-            }
-        });
-
-        Button deleteButton = view.findViewById(R.id.delete_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dbAdapter.open();
-                dbAdapter.delete(noteId);
-                dbAdapter.close();
-
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.note_list_fragment, new NoteListFragment())
-                        .commit();
-            }
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.note_list_fragment, fragment)
+                    .commit();
         });
     }
 
     /**
-     * Closes db connection
+     * Converts view to note
+     * @param view - current view
+     * @return converted note
      */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        dbAdapter.close();
+    private Note viewToNote(View view) {
+        TextView idView = view.findViewById(R.id.note_id);
+        long noteId = Long.parseLong(idView.toString());
+
+        EditText contentView = view.findViewById(R.id.input_field);
+        String content = contentView.getText().toString();
+
+        return new Note(noteId, System.currentTimeMillis(), content);
+    }
+
+    /**
+     * Creates fragment to switch and saves bundle with argument to pass data to this fragment     *
+     * @param bundle - bundle with saved argument
+     * @return created fragment
+     */
+    private Fragment getFragment(Bundle bundle) {
+        Fragment fragment = new EditNoteFragment();
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
+    /**
+     * Inits delete button, which should delete note from database and switch fragment to list fragment
+     * @param view - current view
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void initDeleteButton(View view) {
+        Button button = view.findViewById(R.id.delete_button);
+        button.setOnClickListener(v -> {
+            repository.delete(getNoteId());
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.note_list_fragment, new NoteListFragment())
+                    .commit();
+        });
     }
 }

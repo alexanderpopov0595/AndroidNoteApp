@@ -1,5 +1,6 @@
 package com.fancysoft.androidnoteapp.fragment;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -12,10 +13,11 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.fancysoft.androidnoteapp.R;
-import com.fancysoft.androidnoteapp.db.DataBaseAdapter;
 import com.fancysoft.androidnoteapp.db.DataBaseHelper;
 import com.fancysoft.androidnoteapp.db.properties.DataBaseProperties;
 import com.fancysoft.androidnoteapp.model.Note;
+import com.fancysoft.androidnoteapp.repository.NoteRepository;
+import com.fancysoft.androidnoteapp.repository.impl.NoteRepositoryImpl;
 import com.fancysoft.androidnoteapp.utils.Constants;
 import com.fancysoft.androidnoteapp.utils.Helper;
 
@@ -26,7 +28,11 @@ import java.util.Properties;
  */
 public class AddNoteFragment extends Fragment {
 
-    private DataBaseAdapter dbAdapter;
+    /**
+     * Used to work with database
+     */
+    private NoteRepository repository;
+
     /**
      * Passes add note fragment layout to super constructor
      */
@@ -34,55 +40,107 @@ public class AddNoteFragment extends Fragment {
         super(R.layout.fragment_add_note);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button cancelButton = view.findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.note_list_fragment, new NoteListFragment())
-                        .commit();
-            }
-        });
+        initNoteRepository();
 
-        Button saveButton = view.findViewById(R.id.save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View v) {
-                EditText inputField = view.findViewById(R.id.input_field);
-                String text = inputField.getText().toString();
-                Note note = new Note(System.currentTimeMillis(), text);
+        initCancelButton(view);
 
-                dbAdapter.open();
-                long noteId = dbAdapter.add(note);
-                dbAdapter.close();
-
-                Bundle bundle = new Bundle();
-                bundle.putLong(Constants.NOTE_ID_KEY, noteId);
-
-                Fragment fragment = new EditNoteFragment();
-                fragment.setArguments(bundle);
-
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.note_list_fragment, fragment)
-                        .commit();
-            }
-        });
-        run();
+        initSaveButton(view);
     }
 
-    private void run() {
-        Properties properties = Helper.getProperties(this.getContext().getApplicationContext());
+    /**
+     * Inits repository
+     */
+    private void initNoteRepository() {
+        Context context = this.requireContext().getApplicationContext();
+
+        Properties properties = Helper.getProperties(context);
         DataBaseProperties dbProperties = new DataBaseProperties(properties);
 
-        DataBaseHelper dbHelper = new DataBaseHelper(this.getContext().getApplicationContext(), dbProperties);
-        dbAdapter = new DataBaseAdapter(dbHelper, dbProperties);
+        DataBaseHelper dbHelper = new DataBaseHelper(context, dbProperties);
+
+        repository = new NoteRepositoryImpl(dbHelper, dbProperties);
+    }
+
+    /**
+     * Inits "cancel" button, which should switch back to the list fragment
+     *
+     * @param view - current layout
+     */
+    private void initCancelButton(View view) {
+        Button button = view.findViewById(R.id.cancel_button);
+        button.setOnClickListener(v -> getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.note_list_fragment, new NoteListFragment())
+                .commit());
+    }
+
+    /**
+     * Inits "save" button, which should save note and switch to edit fragment
+     *
+     * @param view - current layout
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void initSaveButton(View view) {
+        Button button = view.findViewById(R.id.save_button);
+        button.setOnClickListener(v -> {
+            Note note = viewToNote(view);
+
+            long noteId = repository.save(note);
+
+            Bundle bundle = getBundle(noteId);
+
+            Fragment fragment = getFragment(bundle);
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.note_list_fragment, fragment)
+                    .commit();
+        });
+    }
+
+    /**
+     * Converts view data to note
+     *
+     * @param view - current view
+     * @return created note
+     */
+    private Note viewToNote(View view) {
+        EditText inputField = view.findViewById(R.id.input_field);
+        String text = inputField.getText().toString();
+        return new Note(System.currentTimeMillis(), text);
+    }
+
+    /**
+     * Creates bundle and saves note id to it
+     *
+     * @param noteId - id of created note
+     * @return created bundle
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private Bundle getBundle(long noteId) {
+        Bundle bundle = new Bundle();
+
+        bundle.putLong(Constants.NOTE_ID_KEY, noteId);
+
+        return bundle;
+    }
+
+    /**
+     * Creates fragment to switch and saves bundle with argument to pass data to this fragment
+     *
+     * @param bundle - bundle with saved argument
+     * @return created fragment
+     */
+    private Fragment getFragment(Bundle bundle) {
+        Fragment fragment = new EditNoteFragment();
+        fragment.setArguments(bundle);
+
+        return fragment;
     }
 
 }
