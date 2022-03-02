@@ -1,4 +1,4 @@
-package com.fancysoft.androidnoteapp.repository;
+package com.fancysoft.androidnoteapp.repository.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -18,7 +18,6 @@ import com.fancysoft.androidnoteapp.db.DataBaseHelper;
 import com.fancysoft.androidnoteapp.db.properties.DataBaseProperties;
 import com.fancysoft.androidnoteapp.exception.model.AppException;
 import com.fancysoft.androidnoteapp.model.Note;
-import com.fancysoft.androidnoteapp.repository.impl.NoteRepositoryImpl;
 
 import org.junit.Before;
 import org.junit.Test;
