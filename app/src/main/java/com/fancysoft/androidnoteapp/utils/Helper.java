@@ -38,7 +38,7 @@ public class Helper {
     public static Properties getProperties(Context context) {
         Properties properties = new Properties();
         AssetManager assetManager = context.getAssets();
-        try(InputStream is = assetManager.open("app.properties")) {
+        try (InputStream is = assetManager.open("app.properties")) {
             properties.load(is);
             return properties;
         }
