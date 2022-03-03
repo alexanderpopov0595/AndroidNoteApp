@@ -6,11 +6,14 @@ import androidx.annotation.RequiresApi;
 
 import java.text.DateFormat;
 
+import lombok.Generated;
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
 /**
  * Contains application constants
  */
+@Generated
 @RequiresApi(api = Build.VERSION_CODES.O)
 @UtilityClass
 public class Constants {
