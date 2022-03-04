@@ -156,9 +156,9 @@ public class EditNoteFragment extends Fragment {
      */
     private Note viewToNote(View view) {
         TextView idView = view.findViewById(R.id.note_id);
-        long noteId = Long.parseLong(idView.toString());
+        long noteId = Long.parseLong(idView.getText().toString());
 
-        EditText contentView = view.findViewById(R.id.input_field);
+        EditText contentView = view.findViewById(R.id.note_content);
         String content = contentView.getText().toString();
 
         return new Note(noteId, System.currentTimeMillis(), content);
