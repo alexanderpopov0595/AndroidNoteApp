@@ -6,7 +6,7 @@ import android.database.MatrixCursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -110,7 +110,7 @@ public class NoteListFragment extends Fragment {
      * @param view - current view
      */
     private void initAddButton(View view) {
-        Button button = view.findViewById(R.id.add_button);
+        ImageButton button = view.findViewById(R.id.add_button);
 
         button.setOnClickListener(v -> getParentFragmentManager()
                 .beginTransaction()

@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -72,7 +72,7 @@ public class AddNoteFragment extends Fragment {
      * @param view - current layout
      */
     private void initCancelButton(View view) {
-        Button button = view.findViewById(R.id.cancel_button);
+        ImageButton button = view.findViewById(R.id.cancel_button);
         button.setOnClickListener(v -> getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.note_list_fragment, new NoteListFragment())
@@ -86,7 +86,7 @@ public class AddNoteFragment extends Fragment {
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void initSaveButton(View view) {
-        Button button = view.findViewById(R.id.save_button);
+        ImageButton button = view.findViewById(R.id.save_button);
         button.setOnClickListener(v -> {
             Note note = viewToNote(view);
 

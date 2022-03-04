@@ -13,28 +13,26 @@
         android:layout_weight="1"
         android:layout_margin="10dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:backgroundTint="@color/white"
-            android:text="Cancel"
-            android:textColor="@color/black" />
+            android:backgroundTint="@color/black"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24" />
 
         <View
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <Button
+        <ImageButton
             android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:backgroundTint="@color/white"
-            android:text="Save"
-            android:textColor="@color/black" />
+            android:backgroundTint="@color/black"
+            android:src="@drawable/ic_baseline_save_24" />
 
     </LinearLayout>
 

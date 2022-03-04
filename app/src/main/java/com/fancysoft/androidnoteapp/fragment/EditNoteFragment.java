@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -121,7 +121,7 @@ public class EditNoteFragment extends Fragment {
      * @param view - current layout
      */
     private void initBackButton(View view) {
-        Button button = view.findViewById(R.id.back_button);
+        ImageButton button = view.findViewById(R.id.back_button);
         button.setOnClickListener(v -> getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.note_list_fragment, new NoteListFragment())
@@ -133,7 +133,7 @@ public class EditNoteFragment extends Fragment {
      * @param view - current layout
      */
     private void initSaveButton(View view) {
-        Button button = view.findViewById(R.id.save_button);
+        ImageButton button = view.findViewById(R.id.save_button);
         button.setOnClickListener(v -> {
             Note note = viewToNote(view);
 
@@ -182,7 +182,7 @@ public class EditNoteFragment extends Fragment {
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void initDeleteButton(View view) {
-        Button button = view.findViewById(R.id.delete_button);
+        ImageButton button = view.findViewById(R.id.delete_button);
         button.setOnClickListener(v -> {
             repository.delete(getNoteId());
 
