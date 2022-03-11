@@ -18,6 +18,7 @@ To create note follow these steps:
    ![CREATE_2](./docs/images/create/2.jpg "CREATE_2")
    
 3. Press save button
+   
    ![CREATE_3](./docs/images/create/3.jpg "CREATE_3")
    
 4. Done! Note is saved
